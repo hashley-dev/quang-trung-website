@@ -392,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
       caption: "Chân dung vua Quang Trung – Nguyễn Huệ",
     },
     {
-      src: "images/go-dong-da.jpg",
+      src: makeArt("Gò Đống Đa", "Hà Nội", 500, 550, "gold"),
       fallback: makeArt("Gò Đống Đa", "Hà Nội", 500, 550, "gold"),
       caption: "Gò Đống Đa (Hà Nội) — nơi diễn ra trận Đống Đa năm 1789",
     },
@@ -414,7 +414,13 @@ document.addEventListener("DOMContentLoaded", () => {
       caption: "Tượng đài vua Quang Trung – Nguyễn Huệ (Bảo tàng Quang Trung)",
     },
     {
-      src: "images/bao-tang-quang-trung.jpg",
+      src: makeArt(
+        "Bảo tàng|Quang Trung",
+        "Vùng đất Tây Sơn",
+        500,
+        620,
+        "jade",
+      ),
       fallback: makeArt(
         "Bảo tàng|Quang Trung",
         "Vùng đất Tây Sơn",
@@ -425,12 +431,12 @@ document.addEventListener("DOMContentLoaded", () => {
       caption: "Bảo tàng Quang Trung trên vùng đất Tây Sơn (Gia Lai)",
     },
     {
-      src: "images/rach-gam.jpg",
+      src: makeArt("Rạch Gầm|Xoài Mút", "Sông Tiền", 500, 500, "jade"),
       fallback: makeArt("Rạch Gầm|Xoài Mút", "Sông Tiền", 500, 500, "jade"),
       caption: "Vùng sông Tiền — chiến trường Rạch Gầm – Xoài Mút (1785)",
     },
     {
-      src: "images/phuong-hoang-trung-do.jpg",
+      src: makeArt("Phượng Hoàng|Trung Đô", "Núi Dũng Quyết", 500, 600, "gold"),
       fallback: makeArt(
         "Phượng Hoàng|Trung Đô",
         "Núi Dũng Quyết",
@@ -442,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Núi Dũng Quyết (Vinh, Nghệ An) — nơi Quang Trung định xây Phượng Hoàng Trung Đô",
     },
     {
-      src: "images/le-hoi-dong-da.jpg",
+      src: makeArt("Lễ hội|Đống Đa", "Mồng 5 Tết", 500, 560, "red"),
       fallback: makeArt("Lễ hội|Đống Đa", "Mồng 5 Tết", 500, 560, "red"),
       caption: "Lễ hội gò Đống Đa vào mồng 5 Tết hằng năm",
     },
@@ -742,68 +748,70 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalClose = document.getElementById("modal-close");
   let lastFocusedBeforeModal = null;
 
-  heroesData.forEach((hero, index) => {
-    const card = document.createElement("article");
-    card.className = `hero-card reveal-on-scroll${hero.isMain ? " hero-card-main" : ""}`;
-    card.style.transitionDelay = `${(index % 3) * 0.12}s`;
+  if (heroesGrid && heroModal && modalContent && modalClose) {
+    heroesData.forEach((hero, index) => {
+      const card = document.createElement("article");
+      card.className = `hero-card reveal-on-scroll${hero.isMain ? " hero-card-main" : ""}`;
+      card.style.transitionDelay = `${(index % 3) * 0.12}s`;
 
-    // Nếu chưa có ảnh (image rỗng), dùng luôn ảnh SVG dự phòng làm nguồn
-    const heroImgSrc = hero.image || hero.imageFallback || "";
+      // Nếu chưa có ảnh (image rỗng), dùng luôn ảnh SVG dự phòng làm nguồn
+      const heroImgSrc = hero.image || hero.imageFallback || "";
 
-    card.innerHTML = `
-      <div class="hero-card-img">
-        <img src="${heroImgSrc}" data-fallback="${hero.imageFallback || ""}" alt="${hero.name}" loading="lazy">
-        ${hero.isMain ? '<span class="hero-card-badge">Nhân vật chính</span>' : ""}
-      </div>
-      <div class="hero-card-body">
-        <p class="hero-card-era">${hero.era}</p>
-        <h3 class="hero-card-name">${hero.name}</h3>
-        <p class="hero-card-desc">${hero.short}</p>
-        <button class="hero-card-btn" data-index="${index}">Xem tiểu sử &rarr;</button>
-      </div>
-    `;
-    heroesGrid.appendChild(card);
-  });
+      card.innerHTML = `
+        <div class="hero-card-img">
+          <img src="${heroImgSrc}" data-fallback="${hero.imageFallback || ""}" alt="${hero.name}" loading="lazy">
+          ${hero.isMain ? '<span class="hero-card-badge">Nhân vật chính</span>' : ""}
+        </div>
+        <div class="hero-card-body">
+          <p class="hero-card-era">${hero.era}</p>
+          <h3 class="hero-card-name">${hero.name}</h3>
+          <p class="hero-card-desc">${hero.short}</p>
+          <button class="hero-card-btn" data-index="${index}">Xem tiểu sử &rarr;</button>
+        </div>
+      `;
+      heroesGrid.appendChild(card);
+    });
 
-  function openHeroModal(index) {
-    const hero = heroesData[index];
-    modalContent.innerHTML = `
-      <h3 class="modal-hero-name">${hero.name}</h3>
-      <p class="modal-hero-era">${hero.era}</p>
-      <h4>Tiểu sử</h4>
-      <p>${hero.bio}</p>
-      <h4>Bối cảnh lịch sử</h4>
-      <p>${hero.context}</p>
-      <h4>Chiến công / Sự kiện quan trọng</h4>
-      <p>${hero.achievements}</p>
-      <h4>Ý nghĩa lịch sử</h4>
-      <p>${hero.meaning}</p>
-    `;
-    lastFocusedBeforeModal = document.activeElement;
-    heroModal.classList.add("active");
-    document.body.style.overflow = "hidden";
-    modalClose.focus();
+    function openHeroModal(index) {
+      const hero = heroesData[index];
+      modalContent.innerHTML = `
+        <h3 class="modal-hero-name">${hero.name}</h3>
+        <p class="modal-hero-era">${hero.era}</p>
+        <h4>Tiểu sử</h4>
+        <p>${hero.bio}</p>
+        <h4>Bối cảnh lịch sử</h4>
+        <p>${hero.context}</p>
+        <h4>Chiến công / Sự kiện quan trọng</h4>
+        <p>${hero.achievements}</p>
+        <h4>Ý nghĩa lịch sử</h4>
+        <p>${hero.meaning}</p>
+      `;
+      lastFocusedBeforeModal = document.activeElement;
+      heroModal.classList.add("active");
+      document.body.style.overflow = "hidden";
+      modalClose.focus();
+    }
+
+    function closeHeroModal() {
+      if (!heroModal.classList.contains("active")) return;
+      heroModal.classList.remove("active");
+      document.body.style.overflow = "";
+      if (lastFocusedBeforeModal) lastFocusedBeforeModal.focus();
+    }
+
+    heroesGrid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".hero-card-btn");
+      if (!btn) return;
+      openHeroModal(Number(btn.dataset.index));
+    });
+    modalClose.addEventListener("click", closeHeroModal);
+    heroModal.addEventListener("click", (e) => {
+      if (e.target === heroModal) closeHeroModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeHeroModal();
+    });
   }
-
-  function closeHeroModal() {
-    if (!heroModal.classList.contains("active")) return;
-    heroModal.classList.remove("active");
-    document.body.style.overflow = "";
-    if (lastFocusedBeforeModal) lastFocusedBeforeModal.focus();
-  }
-
-  heroesGrid.addEventListener("click", (e) => {
-    const btn = e.target.closest(".hero-card-btn");
-    if (!btn) return;
-    openHeroModal(Number(btn.dataset.index));
-  });
-  modalClose.addEventListener("click", closeHeroModal);
-  heroModal.addEventListener("click", (e) => {
-    if (e.target === heroModal) closeHeroModal();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeHeroModal();
-  });
 
   /* =====================================================================
      7. RENDER TIMELINE + TƯƠNG TÁC CLICK
