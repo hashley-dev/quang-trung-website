@@ -1,0 +1,12 @@
+
+# QA / debug scripts (không cần cho trang web)
+test3/_probe.mjs
+test3/_qa.mjs
+
+# Hệ điều hành / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.log
